@@ -12,6 +12,10 @@ function dataHighlights(id, data) {
     switch (id) {
       case 'display':
         return `${data.patterns} pattern disponibili`;
+      case 'resolution':
+        return `${data.fisica} (${data.classe}, ${data.aspectRatio})`;
+      case 'refresh':
+        return `${data.hz} Hz · ${data.giudizio} · stabilità ${data.stabilita}`;
       case 'keyboard':
         return `layout ${data.layout}, ${(data.tested || []).length} tasti registrati`;
       case 'trackpad':

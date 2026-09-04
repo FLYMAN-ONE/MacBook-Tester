@@ -34,6 +34,42 @@ export function clear(node) {
   return node;
 }
 
+// --- Componenti "dashboard" condivisi ---
+
+export function pill(text, color) {
+  return el('span', { class: `pill${color ? ` pill--${color}` : ''}` }, text);
+}
+
+export function dashCard(opts = {}, ...children) {
+  const { icon = '•', iconColor = 'blue', title = '', badge = null } = opts;
+  const head = el(
+    'div',
+    { class: 'dash-card__head' },
+    el('span', { class: `dash-icon dash-icon--${iconColor}` }, icon),
+    el('span', { class: 'dash-card__title' }, title),
+    badge,
+  );
+  return el('div', { class: `dash-card${opts.hero ? ' dash-card--hero' : ''}` }, head, ...children);
+}
+
+export function dashRow(label, value, opts = {}) {
+  return el(
+    'div',
+    { class: 'dash-row' },
+    el(
+      'span',
+      { class: 'dash-row__label' },
+      opts.icon ? el('span', { class: 'dash-row__ico' }, opts.icon) : null,
+      label,
+    ),
+    el(
+      'span',
+      { class: `dash-row__value${opts.color ? ` is-${opts.color}` : ''}${opts.wrap ? ' dash-row__value--wrap' : ''}` },
+      value,
+    ),
+  );
+}
+
 export function fmtBytes(bytes) {
   if (!Number.isFinite(bytes)) return '—';
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];

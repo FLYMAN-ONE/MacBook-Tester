@@ -30,13 +30,14 @@ function runCleanups() {
 
 export function mountShell(root) {
   const header = el('header', { class: 'app__header' });
-  const nav = el('nav', { class: 'stepper', 'aria-label': 'Passi del test' });
+  const nav = el('nav', { class: 'topnav', 'aria-label': 'Passi del test' });
   const main = el('main', { class: 'app__main' });
   const app = el(
     'div',
     { class: 'app' },
     header,
-    el('div', { class: 'app__body' }, nav, main),
+    nav,
+    el('div', { class: 'app__body' }, main),
   );
   clear(root).append(app);
 
@@ -80,17 +81,22 @@ export function mountShell(root) {
     clear(nav).append(
       ...STEPS.map((step) => {
         const meta = STATUS_META[step.meta ? 'todo' : statusOf(step.id)];
-        return el(
+        const item = el(
           'button',
           {
             type: 'button',
-            class: `stepper__item ${meta.cls} ${step.id === activeId ? 'is-active' : ''}`,
+            class: `topnav__item ${meta.cls} ${step.id === activeId ? 'is-active' : ''}`,
+            title: step.meta ? step.label : `${step.label} — ${meta.label}`,
             onClick: () => go(step.id),
           },
-          el('span', { class: 'stepper__icon' }, step.icon),
-          el('span', { class: 'stepper__label' }, step.label),
-          step.meta ? null : el('span', { class: 'stepper__dot', title: meta.label }, meta.dot),
+          el('span', { class: 'topnav__icon' }, step.icon),
+          el('span', { class: 'topnav__label' }, step.label),
+          step.meta ? null : el('span', { class: 'topnav__dot' }),
         );
+        if (step.id === activeId) {
+          requestAnimationFrame(() => item.scrollIntoView({ inline: 'center', block: 'nearest' }));
+        }
+        return item;
       }),
     );
   }
@@ -178,9 +184,13 @@ export function mountShell(root) {
     if (currentStepId() !== id) return;
 
     const page = el('article', { class: 'page' });
-    const intro = el('section', { class: 'panel panel--intro', html: mod.intro || '' });
-    const stage = el('section', { class: 'panel panel--stage' });
-    page.append(intro, stage);
+    if (mod.intro) {
+      page.append(el('section', { class: 'panel panel--intro', html: mod.intro }));
+    }
+    const stage = el('section', {
+      class: `panel panel--stage ${mod.bare ? 'panel--bare' : ''}`,
+    });
+    page.append(stage);
     clear(main).append(page);
 
     const ctx = {

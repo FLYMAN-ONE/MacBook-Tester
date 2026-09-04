@@ -1,4 +1,4 @@
-import { el, clear, fmtBytes } from '../core/dom.js';
+import { el, clear, fmtBytes, dashCard, dashRow, pill } from '../core/dom.js';
 
 /* Informazioni di sistema, GPU e caratteristiche del display raccolte dalle API
    del browser. Alcuni valori sono esposti solo da Chrome. */
@@ -78,16 +78,25 @@ function codecs() {
   };
 }
 
+const SECTION_STYLE = {
+  Display: { icon: '🖥️', color: 'blue' },
+  'Colore & gamut': { icon: '🎨', color: 'purple' },
+  Sistema: { icon: '🧠', color: 'green' },
+  GPU: { icon: '🎮', color: 'pink' },
+  Batteria: { icon: '🔋', color: 'green' },
+  Archiviazione: { icon: '💾', color: 'cyan' },
+  Rete: { icon: '🌐', color: 'blue' },
+  'Codec video/audio': { icon: '🎬', color: 'amber' },
+};
+
 function section(title, rows) {
-  return el(
-    'div',
-    { class: 'card' },
-    el('h3', {}, title),
-    el(
-      'dl',
-      { class: 'kv' },
-      ...Object.entries(rows).flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, v == null || v === '' ? '—' : String(v))]),
-    ),
+  const st = SECTION_STYLE[title] || { icon: '•', color: 'blue' };
+  return dashCard(
+    { icon: st.icon, iconColor: st.color, title },
+    ...Object.entries(rows).map(([k, v]) => {
+      const str = v == null || v === '' ? '—' : String(v);
+      return dashRow(k, str, { wrap: str.length > 22 });
+    }),
   );
 }
 

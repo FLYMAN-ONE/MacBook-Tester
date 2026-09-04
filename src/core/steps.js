@@ -17,6 +17,18 @@ export const STEPS = [
     loader: () => import('../tests/display.js'),
   },
   {
+    id: 'resolution',
+    label: 'Risoluzione',
+    icon: '📐',
+    loader: () => import('../tests/resolution.js'),
+  },
+  {
+    id: 'refresh',
+    label: 'Refresh & FPS',
+    icon: '⏱️',
+    loader: () => import('../tests/refresh.js'),
+  },
+  {
     id: 'keyboard',
     label: 'Tastiera',
     icon: '⌨️',

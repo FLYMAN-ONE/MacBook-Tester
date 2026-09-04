@@ -13,6 +13,8 @@ JSON / stampa PDF).
 | Passo | Contenuto |
 | --- | --- |
 | **Display** | Visore a schermo intero stile *screen tester*: tinte piene, gradienti, scala di grigi, barre colore, ricerca pixel difettosi (auto‑ciclo), nitidezza/moiré, geometria e bordi, contrasto, testo, movimento/ghosting, bleeding retroilluminazione. Navigazione da tastiera. |
+| **Risoluzione** | Risoluzione fisica/logica, DPR, aspect ratio, densità (Retina/HiDPI), confronto con gli standard HD/FHD/QHD/4K, info finestra e scaling di sistema. |
+| **Refresh & FPS** | Rilevamento in tempo reale della frequenza di aggiornamento: gauge Hz, FPS attuale/min/max/medio, grafico del frame time, motion test (1×/2×/4×), giudizio sul display e stabilità. |
 | **Tastiera** | Layout ISO IT / ANSI US. Ogni tasto premuto diventa verde; rilevamento tasti "incollati"; lettura live di `code`/`key`/modificatori; conteggio tasti testati. |
 | **Trackpad** | Movimento (copertura a quadranti), click sinistro/destro nelle 9 zone, doppio click, scroll X/Y, trascinamento, pinch‑zoom (wheel+ctrl / gesture Safari). |
 | **Webcam** | Anteprima live, scelta dispositivo, risoluzione e frame rate reali, scatto di un fotogramma. |
