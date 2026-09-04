@@ -1,0 +1,19 @@
+{
+  "name": "macbook-tester",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Webapp per il test guidato di un MacBook usato: display, tastiera, trackpad, audio, webcam, sistema. Nessuna installazione, funziona nel browser.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  },
+  "engines": {
+    "node": ">=18.18"
+  }
+}

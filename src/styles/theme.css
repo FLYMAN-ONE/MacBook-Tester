@@ -1,0 +1,95 @@
+/* Reset leggero + token di tema. Interfaccia scura di default: aiuta a notare
+   difetti del pannello perche' riduce la luce diffusa attorno alle superfici di
+   test, che restano a colori pieni. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0b0d10;
+  --bg-elevated: #12151b;
+  --bg-panel: #161a21;
+  --bg-input: #1c2129;
+  --border: #262c37;
+  --border-strong: #38404d;
+
+  --text: #e8ebf0;
+  --text-dim: #9aa4b2;
+  --text-faint: #6b7482;
+
+  --accent: #3a86ff;
+  --accent-contrast: #ffffff;
+  --ok: #2fbf71;
+  --issue: #ffb020;
+  --danger: #ff5470;
+  --skip: #7a8699;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  line-height: 1.25;
+  font-weight: 650;
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+kbd {
+  background: var(--bg-input);
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 0.1em 0.45em;
+  color: var(--text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}

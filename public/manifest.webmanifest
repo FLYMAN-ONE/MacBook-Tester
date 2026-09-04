@@ -1,0 +1,20 @@
+{
+  "name": "MacBook Tester",
+  "short_name": "MB Tester",
+  "description": "Test guidato hardware e software per MacBook usati.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0d10",
+  "theme_color": "#0b0d10",
+  "lang": "it",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
