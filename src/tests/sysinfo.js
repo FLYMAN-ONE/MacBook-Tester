@@ -102,7 +102,7 @@ export default {
   `,
 
   async render(ctx) {
-    const grid = el('div', { class: 'grid-auto' });
+    const grid = el('div', { class: 'sysinfo-grid' });
     const actions = el('div', { class: 'btn-row' });
     ctx.stage.append(el('div', { class: 'stack' }, actions, grid));
     grid.append(el('p', { class: 'mono' }, 'Raccolgo i dati…'));
