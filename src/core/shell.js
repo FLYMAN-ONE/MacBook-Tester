@@ -121,25 +121,32 @@ export function mountShell(root) {
           label,
         );
 
-      const note = el('textarea', {
-        class: 'resultbar__note',
-        rows: '2',
-        placeholder: 'Note (opzionale): descrivi cosa hai notato…',
-        onInput: (ev) => store.setNote(id, ev.target.value),
-      });
-      note.value = r.note || '';
-
-      clear(wrap).append(
-        el('span', { class: 'resultbar__title' }, 'Esito di questo test'),
+      const children = [
+        el('span', { class: 'resultbar__label' }, 'Esito:'),
         el(
           'div',
           { class: 'resultbar__buttons' },
           button('ok', '✅ Tutto ok', 'btn--ok'),
           button('issue', '⚠️ Problema', 'btn--issue'),
-          button('skip', '⏭️ Salta', 'btn--skip'),
         ),
-        note,
-      );
+      ];
+
+      // la casella note compare solo quando è selezionato "Problema"
+      if (r.status === 'issue') {
+        const note = el('textarea', {
+          class: 'resultbar__note',
+          rows: '2',
+          placeholder: 'Descrivi il problema riscontrato…',
+          onInput: (ev) => store.setNote(id, ev.target.value),
+        });
+        note.value = r.note || '';
+        children.push(note);
+        requestAnimationFrame(() => {
+          if (document.activeElement === document.body) note.focus();
+        });
+      }
+
+      clear(wrap).append(...children);
     }
 
     paint();

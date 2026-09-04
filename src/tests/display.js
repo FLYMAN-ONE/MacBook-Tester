@@ -341,9 +341,8 @@ function drawInto(canvas, pattern, t) {
 
 /* --------------------------- Visore schermo intero --------------------------- */
 
-function openFullscreen(startIndex, onExit) {
+function openFullscreen(startIndex, markerState, onExit) {
   let index = startIndex;
-  let hudHidden = false;
   let autoCycle = false;
   let autoTimer = null;
   let speed = 1;
@@ -352,24 +351,87 @@ function openFullscreen(startIndex, onExit) {
   let strobeRunning = false;
   let domCleanup = null;
   let menuOpen = false;
+  let hudPinned = false;
+  let hudTimer = null;
+  let lastMove = 0;
 
   const surface = el('div', { class: 'surface' });
   const canvas = makeCanvas();
+  const markerLayer = el('div', { class: 'surface__markers' });
+  const navPrev = el(
+    'button',
+    { class: 'surface__nav surface__nav--prev', type: 'button', 'aria-label': 'Pattern precedente', onClick: (e) => { e.stopPropagation(); go(-1); } },
+    '‹',
+  );
+  const navNext = el(
+    'button',
+    { class: 'surface__nav surface__nav--next', type: 'button', 'aria-label': 'Pattern successivo', onClick: (e) => { e.stopPropagation(); go(1); } },
+    '›',
+  );
   const hud = el('div', { class: 'surface__hud' });
   const foot = el('div', { class: 'surface__foot' });
   foot.innerHTML =
     '<span><kbd>←</kbd><kbd>→</kbd> pattern</span>' +
     '<span><kbd>↑</kbd><kbd>↓</kbd> gruppo</span>' +
+    '<span><kbd>clic</kbd> marcatore difetto</span>' +
+    '<span><kbd>C</kbd> azzera marcatori</span>' +
     '<span><kbd>M</kbd> elenco</span>' +
     '<span><kbd>A</kbd> auto‑ciclo</span>' +
-    '<span><kbd>H</kbd> nascondi info</span>' +
-    '<span><kbd>+</kbd><kbd>−</kbd> velocità</span>' +
+    '<span><kbd>H</kbd> mostra/blocca info</span>' +
     '<span><kbd>Esc</kbd> esci</span>';
   const menu = el('div', { class: 'surface__menu', hidden: true });
-  surface.append(canvas, hud, foot, menu);
+  surface.append(canvas, markerLayer, navPrev, navNext, hud, foot, menu);
   document.body.append(surface);
 
   buildMenu();
+  renderMarkers();
+
+  function stackOverlays() {
+    // tiene marcatori, frecce, hud, foot e menu sopra il contenuto del pattern
+    surface.append(markerLayer, navPrev, navNext, hud, foot, menu);
+  }
+
+  function renderMarkers() {
+    clear(markerLayer);
+    markerState.list.forEach((m) => {
+      markerLayer.append(
+        el(
+          'button',
+          {
+            class: 'defect-marker',
+            type: 'button',
+            title: `Marcatore ${m.n} — clic per rimuovere`,
+            style: { left: `${m.x * 100}%`, top: `${m.y * 100}%` },
+            onClick: (e) => {
+              e.stopPropagation();
+              markerState.list = markerState.list.filter((x) => x !== m);
+              renderMarkers();
+              updateHud();
+            },
+          },
+          String(m.n),
+        ),
+      );
+    });
+  }
+
+  function updateHud() {
+    const p = FLAT[index];
+    hud.innerHTML =
+      `<b>${p.name}</b><br>${p.group} · ${index + 1}/${FLAT.length}` +
+      (p.hint ? `<br><span style="opacity:.8">${p.hint}</span>` : '') +
+      (markerState.list.length ? `<br><span style="opacity:.8">${markerState.list.length} marcatori difetto</span>` : '') +
+      (autoCycle ? '<br><span style="opacity:.8">auto‑ciclo attivo</span>' : '');
+  }
+
+  function showHud() {
+    surface.classList.remove('hud-hidden');
+    if (hudTimer) clearTimeout(hudTimer);
+    hudTimer = null;
+    if (!hudPinned) {
+      hudTimer = setTimeout(() => surface.classList.add('hud-hidden'), 3000);
+    }
+  }
 
   function stopAnim() {
     if (rafId) cancelAnimationFrame(rafId);
@@ -384,15 +446,12 @@ function openFullscreen(startIndex, onExit) {
       domCleanup = null;
     }
     canvas.style.display = p.dom ? 'none' : 'block';
-    hud.innerHTML =
-      `<b>${p.name}</b><br>${p.group} · ${index + 1}/${FLAT.length}` +
-      (p.hint ? `<br><span style="opacity:.8">${p.hint}</span>` : '') +
-      (autoCycle ? '<br><span style="opacity:.8">auto‑ciclo attivo</span>' : '');
+    updateHud();
+    showHud();
 
     if (p.dom) {
       domCleanup = p.dom(surface);
-      // reinserisci hud/foot sopra il contenuto DOM
-      surface.append(hud, foot, menu);
+      stackOverlays();
       return;
     }
     if (p.animated) {
@@ -511,8 +570,15 @@ function openFullscreen(startIndex, onExit) {
         break;
       case 'h':
       case 'H':
-        hudHidden = !hudHidden;
-        surface.classList.toggle('hud-hidden', hudHidden);
+        hudPinned = !hudPinned;
+        showHud();
+        break;
+      case 'c':
+      case 'C':
+        markerState.list = [];
+        markerState.seq = 0;
+        renderMarkers();
+        updateHud();
         break;
       case 'a':
       case 'A':
@@ -542,9 +608,25 @@ function openFullscreen(startIndex, onExit) {
   }
 
   function onClick(e) {
-    if (menuOpen || (e.target && e.target.closest && e.target.closest('.surface__menu'))) return;
-    const half = window.innerWidth / 2;
-    go(e.clientX > half ? 1 : -1);
+    if (menuOpen) return;
+    if (e.target && e.target.closest && e.target.closest('.surface__menu, .surface__nav, .defect-marker')) return;
+    // clic = piazza un marcatore difetto (persiste su tutti i pattern)
+    const r = surface.getBoundingClientRect();
+    markerState.seq += 1;
+    markerState.list.push({
+      n: markerState.seq,
+      x: (e.clientX - r.left) / r.width,
+      y: (e.clientY - r.top) / r.height,
+    });
+    renderMarkers();
+    updateHud();
+  }
+
+  function onMove() {
+    const now = Date.now();
+    if (now - lastMove < 350) return;
+    lastMove = now;
+    showHud();
   }
 
   function onFsChange() {
@@ -557,18 +639,21 @@ function openFullscreen(startIndex, onExit) {
     closed = true;
     stopAnim();
     if (autoTimer) clearInterval(autoTimer);
+    if (hudTimer) clearTimeout(hudTimer);
     if (domCleanup) domCleanup();
     window.removeEventListener('keydown', onKey, true);
     surface.removeEventListener('click', onClick);
+    surface.removeEventListener('mousemove', onMove);
     document.removeEventListener('fullscreenchange', onFsChange);
     window.removeEventListener('resize', render);
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     surface.remove();
-    onExit();
+    onExit(markerState.list.length);
   }
 
   window.addEventListener('keydown', onKey, true);
   surface.addEventListener('click', onClick);
+  surface.addEventListener('mousemove', onMove);
   document.addEventListener('fullscreenchange', onFsChange);
   window.addEventListener('resize', render);
   surface.requestFullscreen?.().catch(() => {});
@@ -582,9 +667,14 @@ function openFullscreen(startIndex, onExit) {
 export default {
   intro: `
     <h2>Test del display</h2>
-    <p>Apri il visore a schermo intero e scorri i pattern con le frecce. Per ogni pattern
-    l’aiuto in alto a sinistra spiega cosa cercare.</p>
+    <p>Apri il visore a schermo intero e scorri i pattern con le frecce (o le frecce a schermo).
+    Tutorial e comandi restano visibili <strong>3 secondi</strong>, poi la schermata diventa
+    tutta colore per ispezionare ogni zona. Muovi il mouse o premi <kbd>H</kbd> per rivederli
+    (<kbd>H</kbd> li blocca).</p>
     <ul>
+      <li><strong>Marcatori difetto:</strong> fai <kbd>clic</kbd> dove noti un difetto: compare un numero
+        che <em>resta fisso su tutti i pattern</em>, così verifichi lo stesso punto su ogni schermata.
+        Clic sul numero per rimuoverlo, <kbd>C</kbd> per azzerarli.</li>
       <li><strong>Pixel difettosi:</strong> usa <kbd>A</kbd> per l’auto‑ciclo e osserva tutto lo schermo da vicino.</li>
       <li><strong>Bleeding retroilluminazione:</strong> pattern <em>Nero pieno</em> in stanza buia, guarda i bordi.</li>
       <li><strong>Uniformità e dominanti:</strong> <em>Grigio 50%</em> e <em>Bianco</em>.</li>
@@ -592,7 +682,7 @@ export default {
       <li><strong>Ghosting / risposta:</strong> gruppo <em>Movimento</em>.</li>
     </ul>
     <p class="mono">Nota: il browser non espone luminosità in nit, contrasto reale, refresh massimo effettivo,
-    né True Tone/ProMotion in modo diretto (una stima del refresh è nel passo “Sistema &amp; GPU”).</p>
+    né True Tone/ProMotion in modo diretto (una stima del refresh è nel passo “Refresh &amp; FPS”).</p>
   `,
 
   async render(ctx) {
@@ -608,9 +698,18 @@ export default {
       '▶︎ Avvia il visore a schermo intero',
     );
 
+    // i marcatori di difetto persistono tra un'apertura e l'altra del visore
+    const markerState = { list: [], seq: 0 };
+
     function launch(startIndex) {
-      // nessun esito automatico: la qualita' del pannello la giudica la persona
-      const close = openFullscreen(startIndex, () => {});
+      const close = openFullscreen(startIndex, markerState, (markerCount) => {
+        ctx.setData({
+          patterns: FLAT.length,
+          groups: GROUPS.map((g) => g.name),
+          difettiSegnati: markerCount,
+        });
+        if (markerCount > 0) ctx.setStatusHint?.('issue');
+      });
       ctx.onCleanup(close);
     }
 

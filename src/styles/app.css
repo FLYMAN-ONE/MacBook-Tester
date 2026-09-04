@@ -519,23 +519,20 @@
 .btn--sm { padding: 0.35rem 0.6rem; font-size: 0.82rem; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
-/* ---------- Result bar ---------- */
+/* ---------- Result bar (compatta, non fissa) ---------- */
 .resultbar {
-  position: sticky;
-  bottom: 0;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-lg);
-  padding: 0.8rem 1rem;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.6rem;
-  box-shadow: var(--shadow);
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
-.resultbar__title {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.resultbar__label {
+  font-size: 0.82rem;
+  font-weight: 600;
   color: var(--text-faint);
 }
 .resultbar__buttons {
@@ -548,6 +545,7 @@
 .btn--issue.is-selected { background: rgba(245, 158, 11, 0.18); border-color: var(--issue); color: #ffe6b8; }
 .btn--skip.is-selected { background: rgba(122, 134, 153, 0.2); border-color: var(--skip); }
 .resultbar__note {
+  flex-basis: 100%;
   width: 100%;
   resize: vertical;
   background: var(--bg-input);
@@ -661,8 +659,66 @@
   pointer-events: none;
 }
 .surface__foot kbd { background: rgba(255, 255, 255, 0.15); border-color: rgba(255, 255, 255, 0.3); color: #fff; }
+.surface__hud,
+.surface__foot,
+.surface__nav {
+  transition: opacity 0.45s ease;
+}
 .surface.hud-hidden .surface__hud,
-.surface.hud-hidden .surface__foot { display: none; }
+.surface.hud-hidden .surface__foot,
+.surface.hud-hidden .surface__nav {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* frecce di navigazione a schermo intero */
+.surface__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 92px;
+  border: 0;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  opacity: 0.4;
+}
+.surface__nav:hover { opacity: 0.95; background: rgba(0, 0, 0, 0.55); }
+.surface__nav--prev { left: 12px; }
+.surface__nav--next { right: 12px; }
+
+/* marcatori difetto */
+.surface__markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+.defect-marker {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  min-width: 26px;
+  height: 26px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ff2d55;
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.45);
+  font: 700 13px/1 var(--font);
+  cursor: pointer;
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+}
+.defect-marker:hover { background: #c50c33; }
 .surface__menu {
   position: absolute;
   inset: 0;
