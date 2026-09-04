@@ -1,5 +1,7 @@
 node_modules/
 dist/
+# lockfile escluso: va rigenerato sul sistema di build (era generato su Windows)
+package-lock.json
 .DS_Store
 *.local
 .vite/

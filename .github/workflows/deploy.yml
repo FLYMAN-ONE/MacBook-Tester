@@ -27,9 +27,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        # usa "npm ci" se hai committato package-lock.json, altrimenti "npm install"
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+        run: npm install --no-audit --no-fund --no-package-lock
 
       - name: Build
         run: npm run build
