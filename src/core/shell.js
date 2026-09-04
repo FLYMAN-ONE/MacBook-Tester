@@ -89,7 +89,6 @@ export function mountShell(root) {
             title: step.meta ? step.label : `${step.label} — ${meta.label}`,
             onClick: () => go(step.id),
           },
-          el('span', { class: 'topnav__icon' }, step.icon),
           el('span', { class: 'topnav__label' }, step.label),
           step.meta ? null : el('span', { class: 'topnav__dot' }),
         );

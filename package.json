@@ -5,6 +5,9 @@
   "description": "Webapp per il test guidato di un MacBook usato: display, tastiera, trackpad, audio, webcam, sistema. Nessuna installazione, funziona nel browser.",
   "type": "module",
   "license": "MIT",
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.1.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

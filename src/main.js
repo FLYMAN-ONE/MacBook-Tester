@@ -1,3 +1,4 @@
+import '@fontsource-variable/inter';
 import './styles/theme.css';
 import './styles/app.css';
 import { mountShell } from './core/shell.js';
