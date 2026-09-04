@@ -1,4 +1,5 @@
 import { el, pill, dashCard, dashRow } from '../core/dom.js';
+import { mountAppleCompare } from '../core/apple-compare.js';
 
 /* Risoluzione e parametri schermo: risoluzione fisica, DPR, aspect ratio,
    confronto con gli standard e info su finestra/scaling. */
@@ -69,6 +70,8 @@ export default {
     <p>Confronta questi dati con quanto dichiarato nell’annuncio: risoluzione nativa, aspect ratio
     e densità (Retina). Su un MacBook la risoluzione <em>fisica</em> è la logica moltiplicata per il
     fattore di scala.</p>
+    <p>In fondo puoi <strong>scegliere il modello di MacBook</strong> e confrontare i valori misurati
+    con le <strong>specifiche ufficiali Apple</strong> (dai chip M1 in poi).</p>
   `,
 
   async render(ctx) {
@@ -179,6 +182,8 @@ export default {
       ),
     );
 
+    mountAppleCompare(ctx.stage, { measuredHz: refresh });
+
     ctx.setData({
       logica: `${logW}×${logH}`,
       fisica: `${physW}×${physH}`,
@@ -187,6 +192,7 @@ export default {
       classe: rc.label,
       refreshStimato: refresh,
       finestra: `${window.innerWidth}×${window.innerHeight}`,
+      modello: ctx.store.getDevice() || null,
     });
     ctx.setStatusHint?.('ok');
   },

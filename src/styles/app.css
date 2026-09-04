@@ -439,6 +439,68 @@
   font-weight: 700;
 }
 
+/* Confronto con specifiche Apple */
+.cmp {
+  display: flex;
+  flex-direction: column;
+}
+.cmp-item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.cmp-item:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.cmp-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.cmp-item__name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.cmp-item__icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.cmp-item__icon.is-ok { color: #34d399; }
+.cmp-item__icon.is-warn { color: #fbbf24; }
+.cmp-item__icon.is-info { color: var(--accent-2); }
+.cmp-item__icon.is-na { color: var(--text-faint); }
+.cmp-item__pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.4rem;
+  margin-top: 0.28rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+.cmp-item__pair b {
+  color: var(--text-faint);
+  font-weight: 500;
+}
+.cmp-item__got.is-ok { color: #34d399; }
+.cmp-item__got.is-warn { color: #fbbf24; }
+.cmp-item__got.is-info { color: var(--accent-2); }
+.cmp-item__note {
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--text-faint);
+  line-height: 1.4;
+}
+.cmp-source {
+  margin-top: 0.7rem;
+  font-size: 0.76rem;
+  color: var(--text-faint);
+  line-height: 1.45;
+}
+.cmp-source a { color: var(--accent-2); }
+
 /* Motion test (refresh) */
 .motion {
   position: relative;

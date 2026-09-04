@@ -2,6 +2,7 @@
 // refresh accidentale non perde i progressi.
 
 const KEY = 'macbook-tester:v1';
+const DEVICE_KEY = 'macbook-tester:device';
 const listeners = new Set();
 
 function fresh() {
@@ -76,5 +77,23 @@ export const store = {
   reset() {
     state = fresh();
     persist();
+  },
+  // modello MacBook scelto per il confronto con le specifiche Apple.
+  // Persistito a parte: sopravvive a "Azzera" (non è un risultato di test).
+  getDevice() {
+    try {
+      return localStorage.getItem(DEVICE_KEY) || null;
+    } catch {
+      return null;
+    }
+  },
+  setDevice(id) {
+    try {
+      if (id) localStorage.setItem(DEVICE_KEY, id);
+      else localStorage.removeItem(DEVICE_KEY);
+    } catch {
+      /* storage non disponibile */
+    }
+    listeners.forEach((fn) => fn(state));
   },
 };

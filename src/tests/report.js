@@ -1,6 +1,7 @@
 import { el, clear } from '../core/dom.js';
 import { TEST_STEPS } from '../core/steps.js';
 import { store } from '../core/store.js';
+import { findModel } from '../core/apple-compare.js';
 
 /* Report finale: riepilogo degli esiti + esportazione (Markdown / JSON / stampa). */
 
@@ -47,6 +48,8 @@ function buildMarkdown() {
   lines.push('');
   lines.push(`- Generato: ${new Date().toLocaleString('it-IT')}`);
   lines.push(`- Iniziato: ${new Date(s.startedAt).toLocaleString('it-IT')}`);
+  const model = findModel(store.getDevice());
+  if (model) lines.push(`- Modello dichiarato: ${model.name} (specifiche: support.apple.com/en-us/${model.doc})`);
   const sys = s.results.sysinfo?.data;
   if (sys) {
     lines.push(`- GPU: ${sys.gpu?.Renderer || '—'}`);
@@ -114,8 +117,10 @@ export default {
             ? `${c.todo} test ancora da completare.`
             : '✅ Nessun problema rilevato nei test eseguiti.';
 
+      const model = findModel(store.getDevice());
       root.append(
         el('p', { class: 'mono' }, `Generato il ${stamp}`),
+        model ? el('p', { class: 'mono' }, `Modello dichiarato: ${model.name}`) : null,
         el('div', { class: 'notice notice--info' }, verdict),
         el(
           'div',

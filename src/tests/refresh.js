@@ -1,4 +1,5 @@
 import { el, pill, dashCard, dashRow } from '../core/dom.js';
+import { mountAppleCompare } from '../core/apple-compare.js';
 
 /* Rilevamento refresh e FPS in tempo reale: gauge circolare, statistiche frame,
    grafico del frame time, motion test con 1x/2x/4x, giudizio sul display. */
@@ -11,6 +12,8 @@ export default {
     rendering del browser. Lascia la pagina in primo piano per qualche secondo.</p>
     <p class="mono">Un MacBook standard gira a ~60 Hz; i modelli con ProMotion arrivano a 120 Hz.
     Il valore misurato è indicativo (può essere limitato dal browser o dal risparmio energetico).</p>
+    <p>In fondo puoi <strong>scegliere il modello</strong> e confrontare la frequenza misurata con le
+    <strong>specifiche ufficiali Apple</strong> (dai chip M1 in poi).</p>
   `,
 
   async render(ctx) {
@@ -136,6 +139,9 @@ export default {
       ),
     );
 
+    let measuredHz = 0;
+    const cmp = mountAppleCompare(ctx.stage, { getHz: () => measuredHz || null });
+
     function classify(hz, stabMs) {
       let label = 'Standard';
       let color = 'amber';
@@ -191,6 +197,7 @@ export default {
         stabMs = Math.sqrt(recent.reduce((a, b) => a + (b - m) ** 2, 0) / recent.length);
       }
       const hz = avg || fpsCurrent;
+      measuredHz = Math.round(hz);
       const c = classify(hz, stabMs);
       ratingBadge.textContent = c.label;
       ratingBadge.className = `pill pill--${c.color}`;
@@ -243,7 +250,9 @@ export default {
         if (fpsAvgN >= 6 && !hinted) {
           hinted = true;
           ctx.setStatusHint?.('ok');
+          cmp.refresh();
         }
+        if (fpsAvgN === 22) cmp.refresh(); // affinamento dopo ~10 s
       }
       rafId = requestAnimationFrame(loop);
     }
