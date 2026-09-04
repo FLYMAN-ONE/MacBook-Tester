@@ -89,6 +89,11 @@ kbd {
   outline-offset: 2px;
 }
 
+/* l'attributo hidden deve sempre battere le regole di display dei componenti */
+[hidden] {
+  display: none !important;
+}
+
 button {
   font: inherit;
   color: inherit;

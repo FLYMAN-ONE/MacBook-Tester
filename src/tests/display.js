@@ -457,7 +457,8 @@ function openFullscreen(startIndex, onExit) {
             {
               class: 'swatch',
               type: 'button',
-              onClick: () => {
+              onClick: (e) => {
+                e.stopPropagation();
                 index = fi;
                 toggleMenu(false);
                 render();
@@ -541,7 +542,7 @@ function openFullscreen(startIndex, onExit) {
   }
 
   function onClick(e) {
-    if (menuOpen) return;
+    if (menuOpen || (e.target && e.target.closest && e.target.closest('.surface__menu'))) return;
     const half = window.innerWidth / 2;
     go(e.clientX > half ? 1 : -1);
   }

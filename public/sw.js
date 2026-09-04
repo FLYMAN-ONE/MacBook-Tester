@@ -1,7 +1,7 @@
 /* Service worker minimale: runtime caching (stale-while-revalidate) per far
    funzionare il tool anche offline dopo la prima visita. Nessun manifest di
    build: si adatta ai file con hash generati da Vite. */
-const CACHE = 'macbook-tester-v1';
+const CACHE = 'macbook-tester-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();
